@@ -56,9 +56,23 @@ p "What conclusions can you draw from this data?"
 
 p "Now, let's switch to the other student."
 
-p "Finally, let's pull the code from the other student and test run it in our application."
+p "Let's make sure that the new control works on this machine before we share it."
 
 code(__LINE__) {
-pull 'jflam42 master'
+require 'sho'
+
+chart = ShoChart.new
+w = create_winforms_floating_window chart
+w.left = 800
+w.top = 50
+w.width = 400
+w.height = 400
+w.show
 }
 
+p "Let's add some data to the chart:"
+
+code(__LINE__) {
+x = drange 0, 2 * PI, 0.01
+chart.plot_line(x, sin(x))
+}
