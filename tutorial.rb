@@ -59,6 +59,39 @@ p "Now, let's switch to the other student."
 p "Finally, let's pull the code from the other student and test run it in our application."
 
 code(__LINE__) {
-pull 'jflam42 master'
+!pull 'jlam42 master'
 }
 
+p "We'll need to re-run our calculations from before since pulling from a remote repository may reset our contents. Let's test our code to see if it works with the popup window."
+
+code(__LINE__) {
+require 'sho'
+
+chart = ShoChart.new
+w = create_winforms_floating_window chart
+w.width = 400
+w.height = 400
+w.top = 0
+w.left = 800
+w.show
+}
+
+p "Now let's plot the same data series on the popup chart."
+
+code(__LINE__) {
+m = read_csv_matrix Mesh.open('sho/televisions.csv')
+
+life = m.GetCol(1)
+tvs = m.GetCol(2)
+drs = m.GetCol(3)
+
+chart.plot_points(log(tvs), life)
+r1 = Regress.new life, log(tvs)
+intercept, slope = r1.Beta.first, r1.Beta.last
+chart.plot_straight_line drange(0, 7, 1), slope, intercept
+
+chart.plot_points log(drs), life
+r2 = Regress.new life, log(drs)
+intercept, slope = r2.Beta.first, r2.Beta.last
+chart.plot_straight_line drange(0, 11, 1), slope, intercept
+}
