@@ -59,7 +59,7 @@ p "Now, let's switch to the other student."
 p "Finally, let's pull the code from the other student and test run it in our application."
 
 code(__LINE__) {
-!pull 'jlam42 master'
+!pull 'steve master'
 }
 
 p "We'll need to re-run our calculations from before since pulling from a remote repository may reset our contents. Let's test our code to see if it works with the popup window."
