@@ -29,7 +29,23 @@ code(__LINE__) {
 chart = show_scatter(log(tvs), life)
 }
 
-p "That looks better. But wait, I don't really know how to plot a best-fit line through those data points. I wonder if Steve, my classmate, knows how to do this? Let's ask. As it turns out, Steve has already prepared a method that uses the Sho statistics package that does exactly this:"
+p "That looks better."
+
+p "After reading through the Sho documentation, I've figured out how to plot a least-squares best-fit line through those data points."
+
+code(__LINE__) {
+chart.plot_points(log(tvs), life)
+r1 = Regress.new life, log(tvs)
+intercept, slope = r1.Beta.first, r1.Beta.last
+chart.plot_straight_line drange(0, 7, 1), slope, intercept
+
+chart.plot_points log(drs), life
+r2 = Regress.new life, log(drs)
+intercept, slope = r2.Beta.first, r2.Beta.last
+chart.plot_straight_line drange(0, 11, 1), slope, intercept
+}
+
+p "Let's package up what we've learned from reading the docs into a nice, reusable method:"
 
 code(__LINE__) {
 def plot_regression(chart, x, y)
@@ -39,15 +55,10 @@ def plot_regression(chart, x, y)
 end
 }
 
-p "Steve was nice enough to share it with me. To pull Steve's changes into our local repository, this is what we need to do:"
+p "Let's test out this method to make sure it does what we want:"
 
 code(__LINE__) {
-!pull "steve master"
-}
-
-p "Let's call Steve's method with our local data."
-
-code(__LINE__) {
+chart = show_scatter(log(tvs), life)
 plot_regression chart, log(tvs), life
 }
 
@@ -60,44 +71,3 @@ plot_regression chart, log(drs), life
 
 p "What conclusions can you draw from this data?"
 
-p "There is a usability problem with our program as it stands right now. We'd like the chart to not be embedded within the history. Instead, it should be a topmost floating window that we can position where we want it. From reading the Sho documentation, we do know that the chart is a Windows Forms User Control. Let's see if we can find some code on the Internet that will let us host a Windows Forms control in a floating window."
-
-p "Great! Now that we've gotten the code for hosting a Windows forms control in a floating, topmost window working, let's test our code to see if it works with the popup window."
-
-code(__LINE__) {
-require 'sho'
-
-chart = ShoChart.new
-w = create_winforms_floating_window chart
-w.width = 400
-w.height = 400
-w.top = 0
-w.left = 800
-w.show
-}
-
-p "Now let's plot the same data series on the popup chart."
-
-code(__LINE__) {
-m = read_csv_matrix Mesh.open('sho/televisions.csv')
-
-life = m.GetCol(1)
-tvs = m.GetCol(2)
-drs = m.GetCol(3)
-
-chart.plot_points(log(tvs), life)
-r1 = Regress.new life, log(tvs)
-intercept, slope = r1.Beta.first, r1.Beta.last
-chart.plot_straight_line drange(0, 7, 1), slope, intercept
-
-chart.plot_points log(drs), life
-r2 = Regress.new life, log(drs)
-intercept, slope = r2.Beta.first, r2.Beta.last
-chart.plot_straight_line drange(0, 11, 1), slope, intercept
-}
-
-p "Now that we have a program that plots this data series, let's publish our results back to the Internet."
-
-code(__LINE__) {
-!blog 'Correlation != Causation'
-}
