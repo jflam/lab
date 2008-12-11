@@ -1,3 +1,0 @@
-def hello
-  'hello'
-end
