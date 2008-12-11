@@ -60,7 +60,9 @@ plot_regression chart, log(drs), life
 
 p "What conclusions can you draw from this data?"
 
-p "We'll need to re-run our calculations from before since pulling from a remote repository may reset our contents. Let's test our code to see if it works with the popup window."
+p "There is a usability problem with our program as it stands right now. We'd like the chart to not be embedded within the history. Instead, it should be a topmost floating window that we can position where we want it. From reading the Sho documentation, we do know that the chart is a Windows Forms User Control. Let's see if we can find some code on the Internet that will let us host a Windows Forms control in a floating window."
+
+p "Great! Now that we've gotten the code for hosting a Windows forms control in a floating, topmost window working, let's test our code to see if it works with the popup window."
 
 code(__LINE__) {
 require 'sho'
@@ -92,4 +94,10 @@ chart.plot_points log(drs), life
 r2 = Regress.new life, log(drs)
 intercept, slope = r2.Beta.first, r2.Beta.last
 chart.plot_straight_line drange(0, 11, 1), slope, intercept
+}
+
+p "Now that we have a program that plots this data series, let's publish our results back to the Internet."
+
+code(__LINE__) {
+!blog 'Correlation != Causation'
 }
