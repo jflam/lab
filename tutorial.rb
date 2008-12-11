@@ -29,69 +29,34 @@ code(__LINE__) {
 chart = show_scatter(log(tvs), life)
 }
 
-p "That looks better. Let's see what it looks like to fit a least-squares regression line against that data:"
+p "That looks better. But wait, I don't really know how to plot a best-fit line through those data points. I wonder if Steve, my classmate, knows how to do this? Let's ask. As it turns out, Steve has already prepared a method that uses the Sho statistics package that does exactly this:"
 
 code(__LINE__) {
-r1 = Regress.new life, log(tvs)
-intercept, slope = r1.Beta.first, r1.Beta.last
-chart.plot_straight_line drange(0, 7, 1), slope, intercept
+def plot_regression(chart, x, y)
+  r = Regress.new y, x
+  intercept, slope = r.Beta.first, r.Beta.last
+  chart.plot_straight_line drange(min(x), max(x), 1), slope, intercept
+end
 }
 
-p "Let's do the same thing for the doctor data:"
+p "Steve was nice enough to share it with me. To pull Steve's changes into our local repository, this is what we need to do:"
+
+code(__LINE__) {
+!pull "steve master"
+}
+
+p "Let's call Steve's method with our local data."
+
+code(__LINE__) {
+plot_regression chart, log(tvs), life
+}
+
+p "That looks better. Now, let's do the same thing for the doctor data:"
 
 code(__LINE__) {
 chart.plot_points log(drs), life
-r2 = Regress.new life, log(drs)
-intercept, slope = r2.Beta.first, r2.Beta.last
-chart.plot_straight_line drange(0, 11, 1), slope, intercept
-}
-
-p "Now, let's look at the R-squared values for the two regressions:"
-
-code(__LINE__) {
-puts "tvs: #{r1.Rsq} doctors: #{r2.Rsq}"
+plot_regression chart, log(drs), life
 }
 
 p "What conclusions can you draw from this data?"
 
-p "Now, let's switch to the other student."
-
-p "Finally, let's pull the code from the other student and test run it in our application."
-
-code(__LINE__) {
-!pull 'steve master'
-}
-
-p "We'll need to re-run our calculations from before since pulling from a remote repository may reset our contents. Let's test our code to see if it works with the popup window."
-
-code(__LINE__) {
-require 'sho'
-
-chart = ShoChart.new
-w = create_winforms_floating_window chart
-w.width = 400
-w.height = 400
-w.top = 0
-w.left = 800
-w.show
-}
-
-p "Now let's plot the same data series on the popup chart."
-
-code(__LINE__) {
-m = read_csv_matrix Mesh.open('sho/televisions.csv')
-
-life = m.GetCol(1)
-tvs = m.GetCol(2)
-drs = m.GetCol(3)
-
-chart.plot_points(log(tvs), life)
-r1 = Regress.new life, log(tvs)
-intercept, slope = r1.Beta.first, r1.Beta.last
-chart.plot_straight_line drange(0, 7, 1), slope, intercept
-
-chart.plot_points log(drs), life
-r2 = Regress.new life, log(drs)
-intercept, slope = r2.Beta.first, r2.Beta.last
-chart.plot_straight_line drange(0, 11, 1), slope, intercept
-}
