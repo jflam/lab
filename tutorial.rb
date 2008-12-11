@@ -48,6 +48,14 @@ code(__LINE__) {
 p "Let's call Steve's method with our local data."
 
 code(__LINE__) {
+require 'sho'
+m = read_csv_matrix Mesh.open('sho/televisions.csv')
+
+life = m.GetCol(1)
+tvs = m.GetCol(2)
+drs = m.GetCol(3)
+
+chart = show_scatter(log(tvs), life)
 plot_regression chart, log(tvs), life
 }
 
@@ -85,15 +93,11 @@ life = m.GetCol(1)
 tvs = m.GetCol(2)
 drs = m.GetCol(3)
 
-chart.plot_points(log(tvs), life)
-r1 = Regress.new life, log(tvs)
-intercept, slope = r1.Beta.first, r1.Beta.last
-chart.plot_straight_line drange(0, 7, 1), slope, intercept
+chart = show_scatter(log(tvs), life)
+plot_regression chart, log(tvs), life
 
 chart.plot_points log(drs), life
-r2 = Regress.new life, log(drs)
-intercept, slope = r2.Beta.first, r2.Beta.last
-chart.plot_straight_line drange(0, 11, 1), slope, intercept
+plot_regression chart, log(drs), life
 }
 
 p "Now that we have a program that plots this data series, let's publish our results back to the Internet."
